@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 loguru = "^0.6.0"
 python-telegram-bot = "^20.0"
+environs = "^9.5.0"
 
 
 [build-system]
