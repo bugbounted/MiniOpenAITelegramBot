@@ -32,16 +32,49 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 @log.catch()
 def main() -> None:
     openai.api_key = config.OPENAI_API_KEY
+    log.success('OpenAI API key loaded successfully')
 
     app = ApplicationBuilder().token(config.TELEGRAM_BOT_TOKEN).build()
 
     app.add_handler(MessageHandler(filters.TEXT, message))
 
+    log.success("Bot started")
     app.run_polling()
 
 
 if __name__ == '__main__':
+    # Configure logging
+    log.add(
+        'logs/debug.log',
+        level='DEBUG',
+        colorize=True,
+        backtrace=True,
+        diagnose=True,
+        enqueue=True,
+        catch=True,
+        rotation='10 MB',
+        compression='zip',
+        delay=True,
+    )
+
+    log.add(
+        'logs/error.log',
+        level='ERROR',
+        colorize=True,
+        backtrace=False,
+        diagnose=False,
+        enqueue=True,
+        catch=True,
+        rotation='10 MB',
+        compression='zip',
+        delay=True,
+    )
+
     try:
         main()
     except (SystemExit, KeyboardInterrupt):
-        sys.exit("SystemExit")
+        log.info("System exit")
+    except Exception as err:
+        log.opt(exception=True).error(err)
+    finally:
+        log.info("Bot stopped")
