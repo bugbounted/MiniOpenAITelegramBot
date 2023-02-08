@@ -21,7 +21,7 @@ def openai_request(prompt: str) -> str:
 
 
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.effective_user.id in config.TELEGRAM_USERS:
+    if update.effective_user.id in map(int, config.TELEGRAM_USERS):
         await update.message.reply_html(
             f"<b>{update.message.text}</b> {openai_request(prompt=update.message.text)}"
         )
