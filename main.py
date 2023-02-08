@@ -3,7 +3,7 @@ import sys
 import openai
 from loguru import logger as log
 from telegram import Update
-from telegram.ext import filters, ApplicationBuilder, ContextTypes, MessageHandler
+from telegram.ext import filters, ApplicationBuilder, ContextTypes, MessageHandler, CommandHandler
 
 from config import Config
 
@@ -20,7 +20,11 @@ def openai_request(prompt: str) -> str:
     )["choices"][0]["text"].strip()
 
 
-async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def start_command_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("Send me any prompt to get OpenAI answer.")
+
+
+async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.effective_user.id in map(int, config.TELEGRAM_USERS):
         await update.message.reply_html(
             f"<b>{update.message.text}</b> {openai_request(prompt=update.message.text)}"
@@ -36,7 +40,8 @@ def main() -> None:
 
     app = ApplicationBuilder().token(config.TELEGRAM_BOT_TOKEN).build()
 
-    app.add_handler(MessageHandler(filters.TEXT, message))
+    app.add_handler(CommandHandler('start', start_command_handler))
+    app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
     log.success("Bot started")
     app.run_polling()
