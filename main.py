@@ -8,6 +8,9 @@ from telegram.ext import filters, ApplicationBuilder, ContextTypes, MessageHandl
 from config import Config
 
 
+config = Config()   # TODO: remove from global scoup
+
+
 def openai_request(prompt: str) -> str:
     return openai.Completion.create(
         engine="text-davinci-003",
@@ -18,13 +21,16 @@ def openai_request(prompt: str) -> str:
 
 
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_html(
-        f"<b>{update.message.text}</b> {openai_request(prompt=update.message.text)}"
-    )
+    if update.effective_user.id in config.TELEGRAM_USERS:
+        await update.message.reply_html(
+            f"<b>{update.message.text}</b> {openai_request(prompt=update.message.text)}"
+        )
+    else:
+        await update.message.reply_text("Access denied!")
 
 
 @log.catch()
-def main(config: Config) -> None:
+def main() -> None:
     openai.api_key = config.OPENAI_API_KEY
 
     app = ApplicationBuilder().token(config.TELEGRAM_BOT_TOKEN).build()
@@ -36,6 +42,6 @@ def main(config: Config) -> None:
 
 if __name__ == '__main__':
     try:
-        main(config=Config())
+        main()
     except (SystemExit, KeyboardInterrupt):
         sys.exit("SystemExit")
