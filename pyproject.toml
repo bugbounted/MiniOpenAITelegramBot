@@ -10,6 +10,7 @@ python = "^3.11"
 loguru = "^0.6.0"
 python-telegram-bot = "^20.0"
 environs = "^9.5.0"
+openai = "^0.26.5"
 
 
 [build-system]
