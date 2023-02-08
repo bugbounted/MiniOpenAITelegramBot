@@ -8,7 +8,7 @@ from telegram.ext import filters, ApplicationBuilder, ContextTypes, MessageHandl
 from config import Config
 
 
-config = Config()   # TODO: remove from global scoup
+config = Config()   # TODO: remove from global scope
 
 
 def openai_request(prompt: str) -> str:
@@ -26,10 +26,16 @@ async def start_command_handler(update: Update, context: ContextTypes.DEFAULT_TY
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.effective_user.id in map(int, config.TELEGRAM_USERS):
+        log.trace(f"Received a prompt: {update.message.text}")
+        response = openai_request(prompt=update.message.text)
+        log.trace(f"Received a response: {response}")
+
         await update.message.reply_html(
             f"<b>{update.message.text}</b> {openai_request(prompt=update.message.text)}"
         )
+
     else:
+        log.trace(f"User {update.effective_user.id} not in the list of allowed users")
         await update.message.reply_text("Access denied!")
 
 
