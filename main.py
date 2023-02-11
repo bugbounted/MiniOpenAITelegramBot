@@ -2,6 +2,7 @@ import sys
 
 import openai
 from loguru import logger as log
+from openai.error import RateLimitError
 from telegram import Update
 from telegram.ext import filters, ApplicationBuilder, ContextTypes, MessageHandler, CommandHandler
 
@@ -30,16 +31,20 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         response = openai_request(prompt=update.message.text)
         log.trace(f"Received a response: {response}")
 
-        await update.message.reply_html(
-            f"<b>{update.message.text}</b> {openai_request(prompt=update.message.text)}"
-        )
+        try:
+            await update.message.reply_html(
+                f"<b>{update.message.text}</b> {openai_request(prompt=update.message.text)}"
+            )
+        except RateLimitError as e:
+            log.error(e)
+            await update.message.reply_html(f"Something went wrong:\n<code>{e}</code>")
 
     else:
         log.trace(f"User {update.effective_user.id} not in the list of allowed users")
         await update.message.reply_text("Access denied!")
 
 
-@log.catch()
+@log.opt(exception=True).catch()
 def main() -> None:
     openai.api_key = config.OPENAI_API_KEY
     log.success('OpenAI API key loaded successfully')
@@ -72,7 +77,7 @@ if __name__ == '__main__':
         'logs/error.log',
         level='ERROR',
         colorize=True,
-        backtrace=False,
+        backtrace=True,
         diagnose=False,
         enqueue=True,
         catch=True,
