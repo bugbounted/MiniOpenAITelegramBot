@@ -6,7 +6,7 @@ from openai.error import RateLimitError
 from telegram import Update
 from telegram.ext import filters, ApplicationBuilder, ContextTypes, MessageHandler, CommandHandler
 
-from config import Config
+from config import Config, setup_logging
 
 
 config = Config()   # TODO: remove from global scope
@@ -51,6 +51,7 @@ def main() -> None:
 
     app = ApplicationBuilder().token(config.TELEGRAM_BOT_TOKEN).build()
 
+    # Register handlers
     app.add_handler(CommandHandler('start', start_command_handler))
     app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
@@ -59,33 +60,8 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    # Configure logging
-    if config.DEBUG:
-        log.add(
-            'logs/debug.log',
-            level='DEBUG',
-            colorize=True,
-            backtrace=True,
-            diagnose=True,
-            enqueue=True,
-            catch=True,
-            delay=True,
-        )
-
-    log.add(
-        'logs/error.log',
-        level='ERROR',
-        colorize=True,
-        backtrace=True,
-        diagnose=config.DEBUG,
-        enqueue=True,
-        catch=True,
-        rotation='10 MB' if config.DEBUG else None,
-        compression='zip' if config.DEBUG else None,
-        delay=True,
-    )
-
     try:
+        setup_logging(log, config.DEBUG)
         main()
     except (SystemExit, KeyboardInterrupt):
         log.info("System exit")
