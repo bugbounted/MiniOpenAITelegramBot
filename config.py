@@ -12,3 +12,4 @@ class Config:
     TELEGRAM_BOT_TOKEN = env.str("TELEGRAM_BOT_TOKEN")
     TELEGRAM_USERS = env.list("TELEGRAM_USERS", validate=lambda n: all(user.isdecimal() for user in n))
     OPENAI_API_KEY = env.str("OPENAI_API_KEY")
+    DEBUG = env.bool("DEBUG", default=False)

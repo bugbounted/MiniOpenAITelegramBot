@@ -60,29 +60,28 @@ def main() -> None:
 
 if __name__ == '__main__':
     # Configure logging
-    log.add(
-        'logs/debug.log',
-        level='DEBUG',
-        colorize=True,
-        backtrace=True,
-        diagnose=True,
-        enqueue=True,
-        catch=True,
-        rotation='10 MB',
-        compression='zip',
-        delay=True,
-    )
+    if config.DEBUG:
+        log.add(
+            'logs/debug.log',
+            level='DEBUG',
+            colorize=True,
+            backtrace=True,
+            diagnose=True,
+            enqueue=True,
+            catch=True,
+            delay=True,
+        )
 
     log.add(
         'logs/error.log',
         level='ERROR',
         colorize=True,
         backtrace=True,
-        diagnose=False,
+        diagnose=config.DEBUG,
         enqueue=True,
         catch=True,
-        rotation='10 MB',
-        compression='zip',
+        rotation='10 MB' if config.DEBUG else None,
+        compression='zip' if config.DEBUG else None,
         delay=True,
     )
 
@@ -90,7 +89,5 @@ if __name__ == '__main__':
         main()
     except (SystemExit, KeyboardInterrupt):
         log.info("System exit")
-    except Exception as err:
-        log.opt(exception=True).error(err)
     finally:
         log.info("Bot stopped")
