@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "miniopenaitelegrambot"
 version = "0.1.0"
-description = ""
+description = "Simple OpenAI client in Telegram bot for personal use"
+license = "MIT"
 authors = ["LagrangeH <maxsergeev39@gmail.com>"]
 readme = "README.md"
+repository = "https://github.com/LagrangeH/MiniOpenAITelegramBot"
+keywords = ['telegram', 'openai', 'telegram-bot-api', 'chatgpt']
 
 [tool.poetry.dependencies]
 python = "^3.11"
