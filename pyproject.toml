@@ -15,7 +15,6 @@ python-telegram-bot = "^20.0"
 environs = "^9.5.0"
 openai = "^0.26.5"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

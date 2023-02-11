@@ -46,6 +46,8 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 @log.opt(exception=True).catch()
 def main() -> None:
+    setup_logging(log, config.DEBUG)
+
     openai.api_key = config.OPENAI_API_KEY
     log.success('OpenAI API key loaded successfully')
 
@@ -56,14 +58,14 @@ def main() -> None:
     app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
     log.success("Bot started")
-    app.run_polling()
 
-
-if __name__ == '__main__':
     try:
-        setup_logging(log, config.DEBUG)
-        main()
+        app.run_polling()
     except (SystemExit, KeyboardInterrupt):
         log.info("System exit")
     finally:
         log.info("Bot stopped")
+
+
+if __name__ == '__main__':
+    main()
