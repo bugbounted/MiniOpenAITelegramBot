@@ -35,7 +35,7 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         try:
             await update.message.reply_html(
-                f"<b>{update.message.text}</b> {openai_request(prompt=update.message.text)}"
+                f"<b>{update.message.text}</b></br>{openai_request(prompt=update.message.text)}"
             )
         except RateLimitError as e:
             log.error(e)
