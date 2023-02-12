@@ -28,7 +28,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 @send_typing_action
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """if update.effective_user.id in map(int, config.TELEGRAM_USERS):"""
+    if not update.effective_user.id in map(int, config.TELEGRAM_USERS):
         log.trace(f"Received a prompt: {update.message.text}")
         response = openai_request(prompt=update.message.text)
         log.trace(f"Received a response: {response}")
@@ -42,5 +42,5 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_html(f"Something went wrong:\n<code>{e}</code>")
 
     else:
-        log.trace(f"User {update.effective_user.id} not in the list of allowed users")
+        log.trace(f"User {update.effective_user.id} in the list of allowed users")
         await update.message.reply_text("Access denied!")
