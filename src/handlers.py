@@ -29,7 +29,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 @send_typing_action
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.effective_user.id in map(int, config.TELEGRAM_USERS):
-        response = openai_request(prompt=message.text)
+        log.trace(f"Received a prompt: {update.message.text}")
+        response = openai_request(prompt)
         log.trace(f"Received a response: {response}")
 
         try:
