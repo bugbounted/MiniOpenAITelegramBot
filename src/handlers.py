@@ -35,7 +35,7 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         try:
             await update.message.reply_html(
-                f"Something went wrong:<b>{update.message.text}</b>\n {openai_request(prompt=update.message.text)}"
+                f"پرسش شما:\n<b>{update.message.text}</b>\n پاسخ زیرک:\n {openai_request(prompt=update.message.text)}\nقدرت گرفته از ربات هوش مصنوعی زیرک @zirakaibot"
             )
         except RateLimitError as e:
             log.error(e)
